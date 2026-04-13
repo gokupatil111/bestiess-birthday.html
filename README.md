@@ -398,7 +398,7 @@
             Apki health hamesha gooodd most rahe, hamesha hamesha apko kuch na ho —<br>
             ham ek din <span class="lv">zarur mile</span>, ek surprise ke saath! 🎁<br><br>
             Challoooo apko bohot bohot <span class="lv">happiest birthday</span>!!<br>
-            Could you have the happiest day ever! ❤️💕😁
+            you have a great happiest dayyyyy ❤️💕😁
         </div>
         <button id="play-again" onclick="resetGame()">Play Again 🔄</button>
     </div>

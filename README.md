@@ -1,1 +1,606 @@
-# bestiess-birthday.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Nadaauuuu ! 🎂</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Quicksand:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #1a0533;
+            min-height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #stars-bg {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 20% 50%, #2d0a4e 0%, #1a0533 40%, #0a0118 100%);
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: #fff;
+            animation: twinkle var(--d) ease-in-out infinite alternate;
+        }
+
+        @keyframes twinkle {
+            from {
+                opacity: 0.1;
+            }
+
+            to {
+                opacity: 0.9;
+            }
+        }
+
+        #ui {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(26, 5, 51, 0.9), transparent);
+        }
+
+        #score-box,
+        #timer-box {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 40px;
+            padding: 7px 18px;
+            color: #fff;
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        #score-box span,
+        #timer-box span {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffb6e6;
+        }
+
+        #title-text {
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 17px;
+            font-weight: 800;
+            color: #ffb6e6;
+            text-shadow: 0 0 20px rgba(255, 182, 230, 0.6);
+            letter-spacing: 1px;
+        }
+
+        #game-area {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+        }
+
+        .balloon {
+            position: absolute;
+            cursor: pointer;
+            animation: float-up linear forwards;
+            z-index: 20;
+            touch-action: none;
+        }
+
+        .balloon svg {
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+            transition: transform 0.1s;
+        }
+
+        .balloon:active svg {
+            transform: scale(0.9);
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+            }
+
+            85% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(var(--travel)) rotate(var(--wobble));
+                opacity: 0;
+            }
+        }
+
+        .pop-burst {
+            position: absolute;
+            pointer-events: none;
+            z-index: 30;
+            width: 80px;
+            height: 80px;
+            transform: translate(-50%, -50%);
+            animation: burst 0.35s ease-out forwards;
+        }
+
+        @keyframes burst {
+            from {
+                transform: translate(-50%, -50%) scale(0.2);
+                opacity: 1;
+            }
+
+            to {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+
+        .confetti-piece {
+            position: fixed;
+            pointer-events: none;
+            z-index: 200;
+            animation: cffall linear forwards;
+        }
+
+        @keyframes cffall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .score-pop {
+            position: absolute;
+            pointer-events: none;
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffb6e6;
+            text-shadow: 0 2px 10px rgba(255, 100, 200, 0.9);
+            animation: sfloat 0.9s ease-out forwards;
+            z-index: 50;
+            white-space: nowrap;
+        }
+
+        @keyframes sfloat {
+            0% {
+                transform: translate(-50%, 0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -70px) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        #progress-wrap {
+            position: fixed;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(340px, 90vw);
+            z-index: 100;
+        }
+
+        #progress-label {
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.45);
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        #progress-bar-bg {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            height: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6eb4, #ffb6e6);
+            border-radius: 20px;
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 110, 180, 0.6);
+        }
+
+        /* START SCREEN */
+        #start-screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            background: rgba(26, 5, 51, 0.98);
+            gap: 18px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .start-emoji {
+            font-size: 62px;
+            animation: bounce 1.2s ease-in-out infinite alternate;
+        }
+
+        @keyframes bounce {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-14px);
+            }
+        }
+
+        .start-title {
+            font-family: 'Baloo 2', sans-serif;
+            font-size: clamp(26px, 8vw, 46px);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255, 182, 230, 0.7);
+            line-height: 1.25;
+        }
+
+        .start-sub {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.55);
+            line-height: 1.7;
+            max-width: 300px;
+        }
+
+        #start-btn {
+            padding: 14px 44px;
+            background: linear-gradient(135deg, #ff6eb4, #c44dff);
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(196, 77, 255, 0.5);
+            transition: transform 0.15s, box-shadow 0.15s;
+            letter-spacing: 0.5px;
+        }
+
+        #start-btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 12px 40px rgba(196, 77, 255, 0.7);
+        }
+
+        #start-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* WIN SCREEN */
+        #win-screen {
+            position: fixed;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 600;
+            background: rgba(26, 5, 51, 0.97);
+            padding: 2rem;
+            text-align: center;
+            gap: 14px;
+            overflow-y: auto;
+        }
+
+        #win-screen.show {
+            display: flex;
+        }
+
+        .win-emoji-row {
+            font-size: 38px;
+            animation: bounce 1s ease-in-out infinite alternate;
+        }
+
+        .win-title {
+            font-family: 'Baloo 2', sans-serif;
+            font-size: clamp(24px, 7vw, 40px);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255, 182, 230, 0.8);
+            line-height: 1.3;
+        }
+
+        .win-msg-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 182, 230, 0.2);
+            border-radius: 20px;
+            padding: 1.3rem 1.7rem;
+            max-width: 380px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+            line-height: 2;
+        }
+
+        .win-msg-card .nm {
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 19px;
+            font-weight: 800;
+            color: #ffb6e6;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .win-msg-card .lv {
+            color: #ff6eb4;
+            font-weight: 600;
+        }
+
+        #play-again {
+            padding: 11px 34px;
+            background: transparent;
+            border: 2px solid rgba(255, 182, 230, 0.4);
+            border-radius: 50px;
+            color: #ffb6e6;
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #play-again:hover {
+            background: rgba(255, 182, 230, 0.1);
+            border-color: #ffb6e6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="stars-bg"></div>
+
+    <div id="start-screen">
+        <div class="start-emoji">🎈</div>
+        <div class="start-title">Pop the Balloons,<br>Nadaauuuu! 🎂</div>
+        <div class="start-sub">Tap or click the balloons to pop them!<br>Pop <strong style="color:#ffb6e6">20
+                balloons</strong> to unlock your surprise 🎁</div>
+        <button id="start-btn" onclick="startGame()">Let's Gooo! 🎉</button>
+    </div>
+
+    <div id="win-screen">
+        <div class="win-emoji-row">🎂🎉🎊</div>
+        <div class="win-title">Yayyyy Nadussss paaduss!! 🥳</div>
+        <div class="win-msg-card">
+            <span class="nm">Hiiiiii, Heyyyyyyy, Nadiaaaa, Naaduuuuu!!!!! 😭</span>
+            God bless ap hamesha meri <span class="lv">best friend</span> rahoooo yrrrrrrr<br>
+            <span class="lv">I love u my sisu bestie frienddddddd</span> 💕<br><br>
+            Apki health hamesha gooodd most rahe, hamesha hamesha apko kuch na ho —<br>
+            ham ek din <span class="lv">zarur mile</span>, ek surprise ke saath! 🎁<br><br>
+            Challoooo apko bohot bohot <span class="lv">happiest birthday</span>!!<br>
+            Could you have the happiest day ever! ❤️💕😁
+        </div>
+        <button id="play-again" onclick="resetGame()">Play Again 🔄</button>
+    </div>
+
+    <div id="ui">
+        <div id="score-box">Popped: <span id="score-num">0</span></div>
+        <div id="title-text">🎈 Nadu's Party</div>
+        <div id="timer-box">Time: <span id="timer-num">60</span>s</div>
+    </div>
+
+    <div id="progress-wrap">
+        <div id="progress-label">Pop 20 balloons to unlock the surprise! 🎁</div>
+        <div id="progress-bar-bg">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div id="game-area"></div>
+
+    <script>
+        const GOAL = 20;
+        const GAME_TIME = 60;
+        const COLORS = [
+            { fill: '#ff6eb4', shine: '#ffb6e6', knot: '#cc3380' },
+            { fill: '#c44dff', shine: '#e4a0ff', knot: '#8800cc' },
+            { fill: '#ff4d6d', shine: '#ff9aaa', knot: '#cc0022' },
+            { fill: '#4dc8ff', shine: '#a8e8ff', knot: '#0088cc' },
+            { fill: '#ffdc4d', shine: '#fff0a0', knot: '#cc9900' },
+            { fill: '#4dff9a', shine: '#a0ffd0', knot: '#00cc44' },
+            { fill: '#ff8c4d', shine: '#ffcca0', knot: '#cc4400' },
+        ];
+
+        let score = 0, timer = GAME_TIME, timerInt = null, spawnInt = null, running = false;
+
+        // Stars
+        (function () {
+            const bg = document.getElementById('stars-bg');
+            for (let i = 0; i < 80; i++) {
+                const s = document.createElement('div');
+                s.className = 'star';
+                const sz = Math.random() * 2.5 + 0.5;
+                s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random() * 100}%;top:${Math.random() * 100}%;--d:${(Math.random() * 2 + 1).toFixed(1)}s;animation-delay:${(Math.random() * 3).toFixed(1)}s`;
+                bg.appendChild(s);
+            }
+        })();
+
+        function makeSVG(ci) {
+            const c = COLORS[ci];
+            return `<svg width="64" height="95" viewBox="0 0 64 95" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="32" cy="33" rx="26" ry="30" fill="${c.fill}"/>
+    <ellipse cx="22" cy="20" rx="8" ry="10" fill="${c.shine}" opacity="0.45"/>
+    <ellipse cx="32" cy="62" rx="6" ry="3.5" fill="${c.fill}"/>
+    <ellipse cx="32" cy="63.5" rx="3.5" ry="2.2" fill="${c.knot}"/>
+    <path d="M30 66 Q27 72 29 80 Q32 74 35 80 Q37 72 34 66Z" fill="${c.knot}"/>
+    <line x1="32" y1="80" x2="31" y2="93" stroke="${c.knot}" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>`;
+        }
+
+        function spawnBalloon() {
+            if (!running) return;
+            const area = document.getElementById('game-area');
+            const vw = window.innerWidth, vh = window.innerHeight;
+            const el = document.createElement('div');
+            el.className = 'balloon';
+            const ci = Math.floor(Math.random() * COLORS.length);
+            const size = 58 + Math.random() * 32;
+            const x = 20 + Math.random() * (vw - 120);
+            const dur = 3.8 + Math.random() * 2.8;
+            const wobble = ((Math.random() - 0.5) * 18).toFixed(1);
+            const travel = -(vh + 160);
+
+            el.style.cssText = `left:${x}px;bottom:-120px;width:${size}px;--travel:${travel}px;--wobble:${wobble}deg;animation-duration:${dur}s;`;
+            el.innerHTML = makeSVG(ci);
+
+            const doPop = (ex, ey) => {
+                if (!el.parentNode || !running) return;
+                popBalloon(el, ex, ey, ci);
+            };
+
+            el.addEventListener('click', e => doPop(e.clientX, e.clientY));
+            el.addEventListener('touchstart', e => {
+                const t = e.touches[0];
+                doPop(t.clientX, t.clientY);
+                e.preventDefault();
+            }, { passive: false });
+
+            area.appendChild(el);
+            el.addEventListener('animationend', () => { if (el.parentNode) el.remove(); });
+        }
+
+        function popBalloon(el, x, y, ci) {
+            const c = COLORS[ci];
+            el.remove();
+            const area = document.getElementById('game-area');
+
+            // Burst
+            const burst = document.createElement('div');
+            burst.className = 'pop-burst';
+            burst.style.cssText = `left:${x}px;top:${y}px;`;
+            const rays = [0, 40, 80, 120, 160, 200, 240, 280, 320].map(a => {
+                const r = a * Math.PI / 180;
+                const d = 28 + Math.random() * 10;
+                return `<line x1="40" y1="40" x2="${(40 + Math.cos(r) * d).toFixed(1)}" y2="${(40 + Math.sin(r) * d).toFixed(1)}" stroke="${c.fill}" stroke-width="${(1.4 + Math.random()).toFixed(1)}" stroke-linecap="round"/>`;
+            }).join('');
+            burst.innerHTML = `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">${rays}<circle cx="40" cy="40" r="9" fill="${c.fill}" opacity="0.8"/></svg>`;
+            area.appendChild(burst);
+            setTimeout(() => { if (burst.parentNode) burst.remove(); }, 400);
+
+            // +1 text
+            const pop = document.createElement('div');
+            pop.className = 'score-pop';
+            pop.textContent = '+1 🎈';
+            pop.style.cssText = `left:${x}px;top:${y - 10}px;`;
+            area.appendChild(pop);
+            setTimeout(() => { if (pop.parentNode) pop.remove(); }, 950);
+
+            // Mini confetti
+            const cfColors = [c.fill, c.shine, '#fff', '#ffb6e6', '#c44dff'];
+            for (let i = 0; i < 10; i++) {
+                const cf = document.createElement('div');
+                cf.className = 'confetti-piece';
+                const w = 5 + Math.random() * 8, h = 5 + Math.random() * 8;
+                cf.style.cssText = `left:${x + (Math.random() - 0.5) * 70}px;top:${y}px;width:${w}px;height:${h}px;background:${cfColors[Math.floor(Math.random() * cfColors.length)]};border-radius:${Math.random() > 0.5 ? '50%' : '2px'};transform:rotate(${Math.random() * 360}deg);animation-duration:${0.7 + Math.random() * 0.7}s;`;
+                document.body.appendChild(cf);
+                setTimeout(() => { if (cf.parentNode) cf.remove(); }, 1600);
+            }
+
+            score++;
+            document.getElementById('score-num').textContent = score;
+            document.getElementById('progress-bar').style.width = Math.min(100, (score / GOAL) * 100) + '%';
+            if (score >= GOAL) triggerWin();
+        }
+
+        function triggerWin() {
+            running = false;
+            clearInterval(timerInt);
+            clearInterval(spawnInt);
+
+            // Mega confetti
+            const hues = ['#ff6eb4', '#c44dff', '#ffdc4d', '#4dff9a', '#4dc8ff', '#ff4d6d', '#ffb6e6'];
+            for (let i = 0; i < 140; i++) {
+                setTimeout(() => {
+                    const cf = document.createElement('div');
+                    cf.className = 'confetti-piece';
+                    const w = 6 + Math.random() * 10, h = 6 + Math.random() * 10;
+                    cf.style.cssText = `left:${Math.random() * 100}vw;top:-20px;width:${w}px;height:${h}px;background:${hues[Math.floor(Math.random() * hues.length)]};border-radius:${Math.random() > 0.5 ? '50%' : '2px'};animation-duration:${1.6 + Math.random() * 2}s;`;
+                    document.body.appendChild(cf);
+                    setTimeout(() => { if (cf.parentNode) cf.remove(); }, 4000);
+                }, i * 25);
+            }
+
+            setTimeout(() => {
+                document.getElementById('win-screen').classList.add('show');
+            }, 700);
+        }
+
+        function startGame() {
+            document.getElementById('start-screen').style.display = 'none';
+            score = 0; timer = GAME_TIME; running = true;
+            document.getElementById('score-num').textContent = '0';
+            document.getElementById('timer-num').textContent = GAME_TIME;
+            document.getElementById('progress-bar').style.width = '0%';
+
+            // Spawn 2 immediately then every 900ms
+            spawnBalloon(); spawnBalloon();
+            spawnInt = setInterval(spawnBalloon, 900);
+
+            timerInt = setInterval(() => {
+                timer--;
+                document.getElementById('timer-num').textContent = timer;
+                if (timer <= 0) {
+                    running = false;
+                    clearInterval(spawnInt);
+                    clearInterval(timerInt);
+                    if (score < GOAL) {
+                        document.getElementById('win-screen').classList.add('show');
+                    }
+                }
+            }, 1000);
+        }
+
+        function resetGame() {
+            document.getElementById('win-screen').classList.remove('show');
+            document.getElementById('game-area').innerHTML = '';
+            clearInterval(timerInt); clearInterval(spawnInt);
+            score = 0; timer = GAME_TIME; running = true;
+            document.getElementById('score-num').textContent = '0';
+            document.getElementById('timer-num').textContent = GAME_TIME;
+            document.getElementById('progress-bar').style.width = '0%';
+            spawnBalloon(); spawnBalloon();
+            spawnInt = setInterval(spawnBalloon, 900);
+            timerInt = setInterval(() => {
+                timer--;
+                document.getElementById('timer-num').textContent = timer;
+                if (timer <= 0) {
+                    running = false;
+                    clearInterval(spawnInt); clearInterval(timerInt);
+                    if (score < GOAL) document.getElementById('win-screen').classList.add('show');
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>
